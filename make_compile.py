@@ -95,4 +95,4 @@ if __name__ == "__main__":
         make("arm64", config)
         print(f"----------x86_64/{config}----------")
         clean()
-        make("x86_64")
+        make("x86_64", config)
