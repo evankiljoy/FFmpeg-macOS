@@ -78,7 +78,7 @@ if __name__ == "__main__":
         execute(f"cd {ffmpeg_dir} && make install")
 
 
-    for config in ["Release", "Debug"]
+    for config in ["Release", "Debug"]:
         print(f"----------arm64/{config}----------")
         clean()
         make("arm64", config)
