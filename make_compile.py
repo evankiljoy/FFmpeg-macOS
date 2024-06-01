@@ -65,13 +65,22 @@ if __name__ == "__main__":
         osx_sdk = f"/tmp/MacOSX{osx_version}.sdk"
         config_opts = f"--optflags='-Og'", f"--disable-stripping" if config == "Debug" else f"--disable-debug"
         prefix_path = target_dir / f'install_{config}_{arch}/'
+        build_opts = [
+            f"--enable-cross-compile",
+            f"--prefix={prefix_path}",
+            f"--enable-shared",
+            f"--disable-static",
+            f"--arch={arch}",
+            f"--cc='clang -arch {arch}'",
+            f"--disable-programs",
+            f"--disable-avdevice",
+            f"--enable-opencl",
+            f"--enable-lto",
+            f"--extra-ldflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version} -flto -fuse-linker-plugin'",
+            f"--extra-cflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version}'"
+        ]
         execute(
-            f"cd {ffmpeg_dir} && ./configure --enable-cross-compile --prefix={prefix_path} "
-            f"--enable-shared --disable-static --arch={arch} --cc='clang -arch {arch}' "
-            f"--disable-programs --disable-avdevice --enable-opencl --enable-lto "
-            f"--extra-ldflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version} -flto -fuse-linker-plugin' "
-            f"--extra-cflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version}' "
-            config_opts
+            f"cd {ffmpeg_dir} && ./configure {' '.join(build_opts + config_opts)}"
         )
         print(f"Make project ({n_cpu} threads).")
         execute(f"cd {ffmpeg_dir} && make -j{n_cpu}")
