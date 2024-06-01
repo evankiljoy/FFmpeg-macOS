@@ -63,7 +63,7 @@ if __name__ == "__main__":
         osx_version = "10.12" if arch == "x86_64" else "11.0"
         collect_sdk(osx_version)
         osx_sdk = f"/tmp/MacOSX{osx_version}.sdk"
-        config_opts = f"--optflags='-Og'", f"--disable-stripping" if config == "Debug" else f"--disable-debug"
+        config_opts = f"--optflags='-Og' --disable-stripping" if config == "Debug" else f"--disable-debug"
         prefix_path = target_dir / f'install_{config}_{arch}/'
         build_opts = [
             f"--enable-cross-compile",
@@ -77,10 +77,11 @@ if __name__ == "__main__":
             f"--enable-opencl",
             f"--enable-lto",
             f"--extra-ldflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version} -flto -fuse-linker-plugin'",
-            f"--extra-cflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version}'"
+            f"--extra-cflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version}'",
+            config_pts
         ]
         execute(
-            f"cd {ffmpeg_dir} && ./configure {' '.join(build_opts + config_opts)}"
+            f"cd {ffmpeg_dir} && ./configure {' '.join(build_opts)}"
         )
         print(f"Make project ({n_cpu} threads).")
         execute(f"cd {ffmpeg_dir} && make -j{n_cpu}")
