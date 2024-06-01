@@ -64,7 +64,7 @@ if __name__ == "__main__":
         collect_sdk(osx_version)
         osx_sdk = f"/tmp/MacOSX{osx_version}.sdk"
         config_opts = f"--optflags='-Og'", f"--disable-stripping" if config == "Debug" else f"--disable-debug"
-        prefix_path = target_dir / config / f'install_{arch}/'
+        prefix_path = target_dir / f'install_{config}_{arch}/'
         execute(
             f"cd {ffmpeg_dir} && ./configure --enable-cross-compile --prefix={prefix_path} "
             f"--enable-shared --disable-static --arch={arch} --cc='clang -arch {arch}' "
