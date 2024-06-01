@@ -42,9 +42,9 @@ if __name__ == "__main__":
     target_dir = pathlib.Path(args.dir).absolute()
     print(f"Make universal binaries... {target_dir}")
     for config in ["Release", "Debug"]:
-        install_intel_dir = target_dir / config / "install_x86_64"
-        install_apple_dir = target_dir / config / "install_arm64"
-        install_universal_dir = target_dir / config / "install_universal"
+        install_intel_dir = target_dir / f"install_{config}_x86_64"
+        install_apple_dir = target_dir / f"install_{config}_arm64"
+        install_universal_dir = target_dir / f"install_{config}_universal"
         if install_universal_dir.exists():
             shutil.rmtree(install_universal_dir)
         install_universal_dir.mkdir()
