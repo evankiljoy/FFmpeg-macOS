@@ -57,18 +57,20 @@ if __name__ == "__main__":
         execute(f"cd {ffmpeg_dir} && make clean && make distclean")
 
 
-    def make(arch: str):
+    def make(arch: str, config: str):
         n_cpu = cpu_count()
         print("Configure project.")
         osx_version = "10.12" if arch == "x86_64" else "11.0"
         collect_sdk(osx_version)
         osx_sdk = f"/tmp/MacOSX{osx_version}.sdk"
+        config_opts = f"--optflags='-Og'", f"--disable-stripping" if config == "Debug" else f"--disable-debug"
         execute(
-            f"cd {ffmpeg_dir} && ./configure --enable-cross-compile --prefix={target_dir / ('install_' + arch + '/')} "
+            f"cd {ffmpeg_dir} && ./configure --enable-cross-compile --prefix={target_dir / config / ('install_' + arch + '/')} "
             f"--enable-shared --disable-static --arch={arch} --cc='clang -arch {arch}' "
-            f"--disable-programs --disable-avdevice --enable-avresample --enable-opencl --enable-lto "
+            f"--disable-programs --disable-avdevice --enable-opencl --enable-lto "
             f"--extra-ldflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version} -flto -fuse-linker-plugin' "
             f"--extra-cflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version}' "
+            config_opts
         )
         print(f"Make project ({n_cpu} threads).")
         execute(f"cd {ffmpeg_dir} && make -j{n_cpu}")
@@ -76,9 +78,10 @@ if __name__ == "__main__":
         execute(f"cd {ffmpeg_dir} && make install")
 
 
-    print("----------arm64----------")
-    clean()
-    make("arm64")
-    print("----------x86_64----------")
-    clean()
-    make("x86_64")
+    for config in ["Release", "Debug"]
+        print(f"----------arm64/{config}----------")
+        clean()
+        make("arm64", config)
+        print(f"----------x86_64/{config}----------")
+        clean()
+        make("x86_64")
