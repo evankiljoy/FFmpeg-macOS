@@ -78,7 +78,7 @@ if __name__ == "__main__":
             f"--enable-lto",
             f"--extra-ldflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version} -flto -fuse-linker-plugin'",
             f"--extra-cflags='-isysroot {osx_sdk} -mmacosx-version-min={osx_version}'",
-            config_pts
+            config_opts
         ]
         execute(
             f"cd {ffmpeg_dir} && ./configure {' '.join(build_opts)}"
