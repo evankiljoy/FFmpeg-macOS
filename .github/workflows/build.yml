@@ -20,7 +20,7 @@ jobs:
       matrix:
         include:
           - os: macos-11
-            tag: n5.0.1
+            tag: release/4.4
     steps:
       - name: CleanOldArtifact
         uses: kolpav/purge-artifacts-action@v1
