@@ -21,21 +21,12 @@ def download_file(url, local_path):
         if file_size == 0:
             print("Unable to retrieve file size - progress will not be shown.")
 
-        downloaded = 0
+        print(f"Downloading: {url}")
         # Open the local file for writing in binary mode
         with open(local_path, 'wb') as out_file:
             # Read and write the content in chunks
             while chunk := response.read(8192):
                 out_file.write(chunk)
-                downloaded += len(chunk)
-                # Calculate the progress
-                progress = (downloaded / file_size) * 100 if file_size else 0
-                # Print the progress
-                sys.stdout.write(f"\rDownloading {url} - {downloaded} of {file_size} bytes ({progress:.2f}%)")
-                sys.stdout.flush()
-
-    # Print a newline to ensure clean output after the download completes
-    print(' - DONE!!!')
 
 def collect_sdk(sdk_version):
     dl_path = f"https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX{sdk_version}.sdk.tar.xz"
@@ -71,7 +62,7 @@ if __name__ == "__main__":
         print("Configure project.")
         osx_version = "10.12" if arch == "x86_64" else "11.0"
         collect_sdk(osx_version)
-        osx_sdk = f"/tmp/MacOSX{sdk_version}.sdk"
+        osx_sdk = f"/tmp/MacOSX{osx_version}.sdk"
         execute(
             f"cd {ffmpeg_dir} && ./configure --enable-cross-compile --prefix={target_dir / ('install_' + arch + '/')} "
             f"--enable-shared --disable-static --arch={arch} --cc='clang -arch {arch}' "
