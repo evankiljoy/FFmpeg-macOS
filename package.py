@@ -10,12 +10,12 @@ if __name__ == "__main__":
     parser.add_argument("--tag", type=str, default="UNKNOWN", help='indicate FFmpeg tag.')
     args = parser.parse_args()
     for config in ["Release", "Debug"]:
-        target_dir = pathlib.Path(args.dir).absolute() / config
+        target_dir = pathlib.Path(args.dir).absolute()
         tag = args.tag
         print(f"Packaging... {target_dir} {tag}")
-        install_intel_dir = target_dir / "install_x86_64"
-        install_apple_dir = target_dir / "install_arm64"
-        install_universal_dir = target_dir / "install_universal"
+        install_intel_dir = target_dir / f"install_{config}_x86_64"
+        install_apple_dir = target_dir / f"install_{config}_arm64"
+        install_universal_dir = target_dir / f"install_{config}_universal"
     
         shutil.make_archive(f"FFmpeg-shared-{tag}-{config}-OSX-arm64", "zip", install_apple_dir)
         print("Finished arm64.")
