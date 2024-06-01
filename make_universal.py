@@ -41,25 +41,25 @@ if __name__ == "__main__":
     args = parser.parse_args()
     target_dir = pathlib.Path(args.dir).absolute()
     print(f"Make universal binaries... {target_dir}")
-
-    install_intel_dir = target_dir / "install_x86_64"
-    install_apple_dir = target_dir / "install_arm64"
-    install_universal_dir = target_dir / "install_universal"
-    if install_universal_dir.exists():
-        shutil.rmtree(install_universal_dir)
-    install_universal_dir.mkdir()
-
-    for f in install_apple_dir.rglob("*"):
-        relative = f.relative_to(install_apple_dir)
-        target = install_universal_dir / relative
-        if f.is_dir():
+    for config in ["Release", "Debug"]:
+        install_intel_dir = target_dir / config / "install_x86_64"
+        install_apple_dir = target_dir / config / "install_arm64"
+        install_universal_dir = target_dir / config / "install_universal"
+        if install_universal_dir.exists():
+            shutil.rmtree(install_universal_dir)
+        install_universal_dir.mkdir()
+    
+        for f in install_apple_dir.rglob("*"):
+            relative = f.relative_to(install_apple_dir)
             target = install_universal_dir / relative
-            target.mkdir(exist_ok=True, parents=True)
-        else:
-            if f.is_symlink():
-                real = f.resolve()
-                os.symlink(real.name, target)
-            elif target.suffix in {'.dylib', '.a'} or len(target.suffix) == 0 and os.access(f, os.X_OK):
-                create_universal_binary(install_intel_dir / relative, install_apple_dir / relative, target)
+            if f.is_dir():
+                target = install_universal_dir / relative
+                target.mkdir(exist_ok=True, parents=True)
             else:
-                shutil.copy2(f, target, follow_symlinks=False)
+                if f.is_symlink():
+                    real = f.resolve()
+                    os.symlink(real.name, target)
+                elif target.suffix in {'.dylib', '.a'} or len(target.suffix) == 0 and os.access(f, os.X_OK):
+                    create_universal_binary(install_intel_dir / relative, install_apple_dir / relative, target)
+                else:
+                    shutil.copy2(f, target, follow_symlinks=False)
