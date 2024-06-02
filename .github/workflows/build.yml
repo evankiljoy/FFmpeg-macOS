@@ -68,11 +68,10 @@ jobs:
       - name: Package outputs
         id: package
         shell: pwsh
-        run: python3 package.py --dir ffmpeg --tag ${FFMPEG_VERSION}
-
+        run: python3 package.py --dir ffmpeg --tag ${{ env.FFMPEG_VERSION }}
       - uses: actions/upload-artifact@v2
         with:
-          name: FFmpeg-${FFMPEG_VERSION}
+          name: FFmpeg-${{ env.FFMPEG_VERSION }}
           path: ${{ github.workspace }}/*.zip
 
       - name: Upload release
