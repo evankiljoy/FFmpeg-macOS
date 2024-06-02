@@ -17,9 +17,9 @@ if __name__ == "__main__":
         install_apple_dir = target_dir / f"install_{config}_arm64"
         install_universal_dir = target_dir / f"install_{config}_universal"
     
-        shutil.make_archive(f"FFmpeg-shared-{tag.split('/')[1]}-{config}-OSX-arm64", "zip", install_apple_dir)
+        shutil.make_archive(f"FFmpeg-shared-{tag}-{config}-OSX-arm64", "zip", install_apple_dir)
         print("Finished arm64.")
-        shutil.make_archive(f"FFmpeg_shared-{tag.split('/')[1]}-{config}-OSX-x86_64", "zip", install_intel_dir)
+        shutil.make_archive(f"FFmpeg_shared-{tag}-{config}-OSX-x86_64", "zip", install_intel_dir)
         print("Finished x86_64.")
-        shutil.make_archive(f"FFmpeg-shared-{tag.split('/')[1]}-{config}-OSX-universal", "zip", install_universal_dir)
+        shutil.make_archive(f"FFmpeg-shared-{tag}-{config}-OSX-universal", "zip", install_universal_dir)
         print("Finished universal.")

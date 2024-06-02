@@ -29,17 +29,22 @@ def download_file(url, local_path):
                 out_file.write(chunk)
 
 def collect_sdk(sdk_version):
-    dl_path = f"https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX{sdk_version}.sdk.tar.xz"
     dest_path = f"/tmp/MacOSX{sdk_version}.sdk.tar.xz"
     
-    # Download the file
-    download_file(dl_path, dest_path)
-    
-    # Untar the file
-    with tarfile.open(dest_path, 'r:xz') as tar:
-        tar.extractall(path='/tmp')
-    
-    print(f"SDK version {sdk_version} collected and extracted to /tmp")
+    # Check if the file already exists
+    if not os.path.exists(dest_path):
+        dl_path = f"https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX{sdk_version}.sdk.tar.xz"
+        
+        # Download the file
+        download_file(dl_path, dest_path)
+        
+        # Untar the file
+        with tarfile.open(dest_path, 'r:xz') as tar:
+            tar.extractall(path='/tmp')
+        
+        print(f"SDK version {sdk_version} collected and extracted to /tmp")
+    else:
+        print(f"SDK version {sdk_version} already exists at /tmp")
     
 
 if __name__ == "__main__":

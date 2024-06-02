@@ -46,24 +46,33 @@ jobs:
           ref: ${{ matrix.tag }}
           path: 'ffmpeg'
 
-      - name: Build project
+      - name: Split release from version number if it exists
+        run: |
+          if [[ ${{ matrix.tag }} == *"/"* ]]; then
+            INPUT_STRING=$(echo ${{ matrix.tag }} | cut -d'/' -f2)
+          else
+            INPUT_STRING=${{ matrix.tag }}
+          fi
+          echo "FFMPEG_VERSION=$INPUT_STRING" >> $GITHUB_ENV
+
+      - name: Build FFMpeg
         id: build
         shell: pwsh
         run: python3 make_compile.py --ffmpeg_dir ffmpeg --target_dir ffmpeg
 
-      - name: Build project
+      - name: Make universal binaries
         id: make_universal
         shell: pwsh
         run: python3 make_universal.py --dir ffmpeg
 
-      - name: Build project
+      - name: Package outputs
         id: package
         shell: pwsh
-        run: python3 package.py --dir ffmpeg --tag ${{ matrix.tag }}
+        run: python3 package.py --dir ffmpeg --tag ${FFMPEG_VERSION}
 
       - uses: actions/upload-artifact@v2
         with:
-          name: FFmpeg-${{ matrix.tag }}
+          name: FFmpeg-${FFMPEG_VERSION}
           path: ${{ github.workspace }}/*.zip
 
       - name: Upload release
